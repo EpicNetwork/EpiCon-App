@@ -2,7 +2,7 @@
 # Supports Win32, Win64, Linux, and OSX as targets.
 
 LIBNAME = lpeg
-LUADIR = ../lua/
+LUADIR ?= ../lua/
 
 COPT = -O2
 # COPT = -DLPEG_DEBUG -g
