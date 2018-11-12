@@ -4,3 +4,6 @@
 [submodule "libs/luafilesystem"]
 	path = libs/luafilesystem
 	url = https://github.com/EpicNetwork/luafilesystem
+[submodule "libs/LuaJIT"]
+	path = libs/luajit
+	url = https://github.com/EpicNetwork/LuaJIT
