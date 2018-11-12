@@ -53,9 +53,6 @@ lpeg.dll: $(FILES)
 
 $(FILES): makefile
 
-test: test.lua re.lua lpeg.so
-	./test.lua
-
 clean:
 	rm -f $(FILES) lpeg.so
 
