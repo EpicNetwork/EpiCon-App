@@ -1,3 +1,6 @@
+# Assumes compilation on Linux or OSX.
+# Supports Win32, Win64, Linux, and OSX as targets.
+
 LIBNAME = lpeg
 LUADIR = ../lua/
 
@@ -23,7 +26,6 @@ CWARNS = -Wall -Wextra -pedantic \
 
 
 CFLAGS = $(CWARNS) $(COPT) -std=c99 -I$(LUADIR) -fPIC
-CC = gcc
 
 FILES = lpvm.o lpcap.o lptree.o lpcode.o lpprint.o
 
@@ -37,6 +39,17 @@ macosx:
 
 lpeg.so: $(FILES)
 	env $(CC) $(DLLFLAGS) $(FILES) -o lpeg.so
+
+# For 32-bit Windows
+win32:
+	make lpeg.dll "DLLFLAGS = -shared -fPIC"
+
+# For 64-bit Windows
+win64:
+	make lpeg.dll "DLLFLAGS = -shared -fPIC"
+
+lpeg.dll: $(FILES)
+	env $(CC) $(DLLFLAGS) $(FILES) -o lpeg.dll
 
 $(FILES): makefile
 
