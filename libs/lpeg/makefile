@@ -54,7 +54,7 @@ lpeg.dll: $(FILES)
 $(FILES): makefile
 
 clean:
-	rm -f $(FILES) lpeg.so
+	rm -f $(FILES) lpeg.so lpeg.dll
 
 
 lpcap.o: lpcap.c lpcap.h lptypes.h
