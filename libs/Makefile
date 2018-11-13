@@ -1,0 +1,81 @@
+#====================================#
+
+linux_CC = gcc
+macosx_CC= gcc
+win32_CC = i686-w64-mingw32-gcc
+win64_CC = x86_64-w64-mingw32-gcc
+
+MYDIR := $(realpath .)
+UPPERDIR = $(MYDIR)/..
+BUILDDIR = $(UPPERDIR)/build
+
+LUAJIT_BUILD_DIR = $(BUILDDIR)/luajit
+LPEG_BUILD_DIR = $(BUILDDIR)/lpeg
+LFS_BUILD_DIR = $(BUILDDIR)/lfs
+
+LUAJIT_MAKE_DIR = $(MYDIR)/luajit
+LPEG_MAKE_DIR = $(MYDIR)/lpeg
+LFS_MAKE_DIR = $(MYDIR)/luafilesystem
+
+LUAJIT_RESULTS_DIR = $(LUAJIT_MAKE_DIR)
+LPEG_RESULTS_DIR = $(LPEG_MAKE_DIR)
+LFS_RESULTS_DIR = $(LFS_MAKE_DIR)/src
+
+JOBS ?= 4
+
+#====================================#
+
+linux_EXT = .so
+macosx_EXT= .so
+win32_EXT = .dll
+win64_EXT = .dll
+EXT      ?= $(linux_EXT)
+
+LFS_RESULTS = lfs$(EXT) lfs.h
+
+#====================================#
+
+MKDIR = mkdir
+MKDIR_SAFE = mkdir -p
+
+RM = rm
+RM_SAFE = rm -f
+
+RMDIR = rm -r
+RMDIR_SAFE = rm -rf
+
+CP = cp
+
+#====================================#
+
+default: linux
+	
+
+archs = linux macosx win32 win64
+
+$(archs): build_folders
+	make -j $(JOBS) --eval="CC=$($@_CC)" -C $(LUAJIT_MAKE_DIR) install
+	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT)" -C $(LPEG_MAKE_DIR) $@
+	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT)" $(LFS_RESULTS)
+
+clean: clean_build_folders
+	make -j $(JOBS) -C $(LUAJIT_MAKE_DIR) clean
+	make -j $(JOBS) -C $(LPEG_MAKE_DIR) clean
+	make -j $(JOBS) -C $(LFS_MAKE_DIR) clean
+
+#====================================#
+
+$(LFS_RESULTS): $(LFS_BUILD_DIR)
+	make -C $(LFS_MAKE_DIR) $(ARCH)
+	$(CP) $(LFS_RESULTS_DIR)/$@ $(LFS_BUILD_DIR)/$@
+
+$(BUILDDIR):
+	$(MKDIR_SAFE) $(BUILDDIR)
+
+$(LUAJIT_BUILD_DIR) $(LPEG_BUILD_DIR) $(LFS_BUILD_DIR): $(BUILDDIR)
+	$(MKDIR_SAFE) $@
+
+build_folders: $(LUAJIT_BUILD_DIR) $(LPEG_BUILD_DIR) $(LFS_BUILD_DIR)
+
+clean_build_folders:
+	$(RMDIR_SAFE) $(LUAJIT_BUILD_DIR) $(LPEG_BUILD_DIR) $(LFS_BUILD_DIR) $(BUILDDIR)
