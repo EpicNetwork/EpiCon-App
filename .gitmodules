@@ -10,3 +10,6 @@
 [submodule "libs/luabry"]
 	path = libs/luabry
 	url = https://github.com/ocornoc/luabry
+[submodule "libs/luasocket"]
+	path = libs/luasocket
+	url = https://github.com/EpicNetwork/luasocket
