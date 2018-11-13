@@ -45,6 +45,7 @@ RMDIR = rm -r
 RMDIR_SAFE = rm -rf
 
 CP = cp
+CP_FOLDER = cp -r
 
 #====================================#
 
@@ -55,6 +56,8 @@ archs = linux macosx win32 win64
 
 $(archs): build_folders
 	make -j $(JOBS) --eval="CC=$($@_CC)" -C $(LUAJIT_MAKE_DIR) install
+	$(MKDIR_SAFE) $(LUAJIT_BUILD_DIR)/include/lua
+	$(CP_FOLDER) $(LUAJIT_BUILD_DIR)/include/luajit-2.1 $(LUAJIT_BUILD_DIR)/include/lua/5.1/
 	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT)" -C $(LPEG_MAKE_DIR) $@
 	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT)" $(LFS_RESULTS)
 
