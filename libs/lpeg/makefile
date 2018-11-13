@@ -1,6 +1,17 @@
 # Assumes compilation on Linux or OSX.
 # Supports Win32, Win64, Linux, and OSX as targets.
 
+BUILD_FOLDER_MASTER=$(abspath .)/../../build
+PREFIX=$(BUILD_FOLDER_MASTER)
+
+# System's libraries directory (where binary libraries are installed)
+LUA_LIBDIR= $(PREFIX)/luajit/lib/lua/5.1
+
+# Lua includes directory
+LUA_INC =  -I$(PREFIX)/luajit/include
+LUA_INC += -I$(PREFIX)/luajit/include/luajit-2.1
+LUA_INC += -I$(PREFIX)/luajit/lua5.1
+
 LIBNAME = lpeg
 LUADIR ?= ../lua/
 
@@ -25,7 +36,7 @@ CWARNS = -Wall -Wextra -pedantic \
 # -Wunreachable-code \
 
 
-CFLAGS = $(CWARNS) $(COPT) -std=c99 -I$(LUADIR) -fPIC
+CFLAGS = $(CWARNS) $(COPT) -std=c99 $(LUA_INC) -fPIC
 
 FILES = lpvm.o lpcap.o lptree.o lpcode.o lpprint.o
 
@@ -38,7 +49,7 @@ macosx:
 	make lpeg.so "DLLFLAGS = -bundle -undefined dynamic_lookup"
 
 lpeg.so: $(FILES)
-	env $(CC) $(DLLFLAGS) $(FILES) -o lpeg.so
+	env $(CC) $(DLLFLAGS) $(FILES) -o $(PREFIX)/lpeg/lpeg.so
 
 # For 32-bit Windows
 win32:
@@ -49,7 +60,7 @@ win64:
 	make lpeg.dll "DLLFLAGS = -shared -fPIC"
 
 lpeg.dll: $(FILES)
-	env $(CC) $(DLLFLAGS) $(FILES) -o lpeg.dll
+	env $(CC) $(DLLFLAGS) $(FILES) -o $(PREFIX)/lpeg/lpeg.dll
 
 $(FILES): makefile
 
