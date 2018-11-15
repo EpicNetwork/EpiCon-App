@@ -87,3 +87,7 @@ build_folders: $(LUAJIT_BUILD_DIR) $(LPEG_BUILD_DIR) $(LFS_BUILD_DIR)
 
 clean_build_folders:
 	$(RMDIR_SAFE) $(LUAJIT_BUILD_DIR) $(LPEG_BUILD_DIR) $(LFS_BUILD_DIR) $(BUILDDIR)
+
+#====================================#
+
+.PHONY: build_folders $(LFS_RESULTS) clean_build_folders default $(archs) clean
