@@ -9,7 +9,7 @@ MYDIR := $(realpath .)
 UPPERDIR = $(MYDIR)/..
 BUILDDIR = $(UPPERDIR)/build
 
-LUAJIT_BUILD_DIR = $(BUILDDIR)/luajit
+LUAJIT_BUILD_DIR = $(BUILDDIR)
 LPEG_BUILD_DIR = $(LUAJIT_BUILD_DIR)/share/lua/5.1
 LFS_BUILD_DIR = $(LUAJIT_BUILD_DIR)/share/lua/5.1
 
@@ -57,13 +57,14 @@ default: linux
 archs = linux macosx win32 win64
 
 $(archs): build_folders
-	make -j $(JOBS) --eval="CC=$($@_CC)" -C $(LUAJIT_MAKE_DIR) install
+	make -j $(JOBS) CC=$($@_CC) PREFIX=$(BUILDDIR) -C $(LUAJIT_MAKE_DIR) install
 	$(MKDIR_SAFE) $(LUAJIT_BUILD_DIR)/include/lua
 	$(CP_FOLDER) $(LUAJIT_BUILD_DIR)/include/luajit-2.1 $(LUAJIT_BUILD_DIR)/include/lua/5.1/
-	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT);LUA_LIBDIR=$(LPEG_BUILD_DIR)" -C $(LPEG_MAKE_DIR) $@
-	make -j $(JOBS) --eval="CC=$($@_CC)" -C $(LSOCK_MAKE_DIR) $@
-	make -j $(JOBS) --eval="CC=$($@_CC);PREFIX_anyarch=$(LUAJIT_BUILD_DIR)" -C $(LSOCK_MAKE_DIR) install
-	make -j $(JOBS) --eval="ARCH=$@;CC=$($@_CC);EXT=$($@_EXT)" $(LFS_RESULTS)
+	make -j $(JOBS) ARCH=$@ CC=$($@_CC) EXT=$($@_EXT) -C $(LPEG_MAKE_DIR) $@
+	make -j $(JOBS) CC=$($@_CC) -C $(LSOCK_MAKE_DIR) $@
+	make -j $(JOBS) CC=$($@_CC) PREFIX_anyarch=$(LUAJIT_BUILD_DIR) -C $(LSOCK_MAKE_DIR) install
+	make -j $(JOBS) ARCH=$@ CC=$($@_CC) EXT=$($@_EXT) -C $(LFS_MAKE_DIR)
+	#make -j $(JOBS) ARCH=$@ CC=$($@_CC) EXT=$($@_EXT) $(LFS_RESULTS)
 
 clean: clean_build_folders
 	make -j $(JOBS) -C $(LUAJIT_MAKE_DIR) clean
